@@ -8,7 +8,9 @@ class Marketplace {
   devices = [];
 
   register(email, password) {
-    const userFound = this.users.find((user) => user.email === email);
+    const userFound = this.users.find((user) => {
+      return user.email === email;
+    });
 
     if (userFound) {
       console.log("Utente già registrato!");
