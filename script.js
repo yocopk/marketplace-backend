@@ -31,6 +31,15 @@ class Marketplace {
       (user) => user.email === email && user.password === password
     );
 
+    const alreadyLogged = this.auth.some((auth) => {
+      return auth.referenceKeyUser === userFound.primaryKey;
+    });
+
+    if (alreadyLogged) {
+      console.log("Utente già loggato.");
+      return null;
+    }
+
     if (userFound) {
       const userDevices = this.devices.filter((device) => {
         return device.referenceKeyUser === userFound.primaryKey;
