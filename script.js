@@ -26,23 +26,36 @@ class Marketplace {
     return authFound || false;
   }
 
-  login(email, password) {
+  login(email, password, devicePrimaryKey) {
     const userFound = this.users.find(
       (user) => user.email === email && user.password === password
     );
 
     if (userFound) {
-      const newAuth = new ModelAuth(userFound.primaryKey);
-      const newDevice = new ModelDevice(userFound.primaryKey);
-      if (this.devices.length <= 2) {
-        this.devices = [...this.devices, newDevice];
-      } else {
-        return console.log(
+      const userDevices = this.devices.filter((device) => {
+        return device.referenceKeyUser === userFound.primaryKey;
+      });
+
+      if (userDevices.length >= 2) {
+        console.log(
           "Hai superato il limite di dispositivi registrati al tuo account."
         );
+        return null;
       }
+
+      const newAuth = new ModelAuth(userFound.primaryKey);
+      const newDevice = new ModelDevice(userFound.primaryKey);
+      const deviceFound = this.devices.find((device) => {
+        return device.referenceKeyUser === newDevice.referenceKeyUser;
+      });
+
+      if (!deviceFound) {
+        this.devices = [...this.devices, newDevice];
+      }
+
       this.auth = [...this.auth, newAuth];
-      return newAuth.token;
+      console.log("Login effettuato con successo!");
+      return { token: newAuth.token, devicePrimaryKey: newDevice.primaryKey };
     } else {
       console.log("Utente non registrato.");
     }
