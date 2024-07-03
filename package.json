@@ -1,0 +1,8 @@
+{
+  "scripts":{
+    "build": "tsc --noEmit && tsc --outDir build"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}
