@@ -1,3 +1,11 @@
+import { ModelAuth } from "./models/Auth";
+import { ModelDevice } from "./models/Device";
+import { ModelAd } from "./models/Ad";
+import { ModelFavorite } from "./models/Favorite";
+import { ModelReport } from "./models/Report";
+import { ModelReview } from "./models/Review";
+import { ModelUser } from "./models/User";
+
 class Marketplace {
   users: Array<ModelUser> = [];
   ads: Array<ModelAd> = [];
@@ -7,7 +15,7 @@ class Marketplace {
   favorites: Array<ModelFavorite> = [];
   devices: Array<ModelDevice> = [];
 
-  register(email: string, password: string) {
+  register(email: ModelUser["email"], password: ModelUser["password"]) {
     const userFound = this.users.find((user) => {
       return user.email === email;
     });
@@ -21,12 +29,12 @@ class Marketplace {
     }
   }
 
-  isTokenValid(token: number) {
+  isTokenValid(token: ModelAuth["token"]) {
     const authFound = this.auth.find((auth) => auth.token === token);
     return authFound || false;
   }
 
-  login(email: string, password: string) {
+  login(email: ModelUser["email"], password: ModelUser["password"]) {
     const userFound = this.users.find(
       (user) => user.email === email && user.password === password
     );
@@ -75,7 +83,7 @@ class Marketplace {
     }
   }
 
-  logout(token: number) {
+  logout(token: ModelAuth["token"]) {
     const authFound = this.isTokenValid(token);
     if (authFound) {
       this.auth = this.auth.filter((auth) => auth.token !== token);
@@ -85,7 +93,7 @@ class Marketplace {
     }
   }
 
-  updateUsername(username: string, token: number) {
+  updateUsername(username: ModelUser["username"], token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (tokenFound) {
       const userKeyFound = this.users.find(
@@ -103,14 +111,14 @@ class Marketplace {
   }
 
   createAd(
-    token: number,
-    title: string,
-    description: string,
-    price: number,
-    category: string,
+    token: ModelAuth["token"],
+    title: ModelAd["title"],
+    description: ModelAd["description"],
+    price: ModelAd["price"],
+    category: ModelAd["category"],
     condition: string,
-    URLimage: string,
-    address: string
+    URLimage: ModelAd["URLimage"],
+    address: ModelAd["address"]
   ) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
@@ -132,14 +140,14 @@ class Marketplace {
   }
 
   updateAd(
-    referenceKeyAd: number,
-    token: number,
-    title: string,
-    description: string,
-    price: number,
-    category: string,
-    URLimage: string,
-    address: string
+    referenceKeyAd: ModelAd["primaryKey"],
+    token: ModelAuth["token"],
+    title: ModelAd["title"],
+    description: ModelAd["description"],
+    price: ModelAd["price"],
+    category: ModelAd["category"],
+    URLimage: ModelAd["URLimage"],
+    address: ModelAd["address"]
   ) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
@@ -167,7 +175,7 @@ class Marketplace {
     }
   }
 
-  deleteAd(token: number, referenceKeyAd: number) {
+  deleteAd(token: ModelAuth["token"], referenceKeyAd: number) {
     const tokenFound = this.isTokenValid(token);
 
     if (!tokenFound) {
@@ -181,7 +189,7 @@ class Marketplace {
     }
   }
 
-  markAsSold(token: number, referenceKeyAd: number, referenceKeyUser: number) {
+  markAsSold(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"], referenceKeyUser: ModelUser["primaryKey"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -203,7 +211,7 @@ class Marketplace {
     }
   }
 
-  createReview(token: number, referenceKeyAd: number, title: string, description: string, rating: number) {
+  createReview(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"], title: ModelAd["title"], description: ModelAd["description"], rating: ModelReview["rating"]) {
     const tokenFound = this.isTokenValid(token);
 
     if (!tokenFound) {
@@ -221,7 +229,7 @@ class Marketplace {
     }
   }
 
-  updateReview(token: number, referenceKeyAd: number, title: string, description: string, rating: number) {
+  updateReview(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"], title: ModelAd["title"], description: ModelAd["description"], rating: ModelReview["rating"]) {
     // verificare il token, se esiste, fare l'update altrimenti dare errore.
     const tokenFound = this.isTokenValid(token);
     const reviewFound = this.reviews.find(
@@ -242,7 +250,7 @@ class Marketplace {
     }
   }
 
-  deleteReview(token: number, referenceKeyAd: number) {
+  deleteReview(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"]) {
     const tokenFound = this.isTokenValid(token);
     const reviewFound = this.reviews.find((review) => {
       return review.referenceKeyAd === referenceKeyAd;
@@ -267,7 +275,7 @@ class Marketplace {
     }
   }
 
-  deleteAccount(token: number) {
+  deleteAccount(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -280,18 +288,18 @@ class Marketplace {
     }
   }
 
-  filterList(category: string) {
+  filterList(category: ModelAd["category"]) {
     // mostra la lista in base alla categoria scelta
     const filteredAds = this.ads.filter((ad) => {
       return ad.category === category;
     });
   }
 
-  AdDetails(referenceKeyAd: number) {
+  AdDetails(referenceKeyAd: ModelAd["primaryKey"]) {
     // Implement the ad details logic here
   }
 
-  itemSoldList(token: number) {
+  itemSoldList(token: ModelAuth["token"]) {
     // Implement the item sold list logic here
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
@@ -309,7 +317,7 @@ class Marketplace {
     }
   }
 
-  itemBoughtList(token: number) {
+  itemBoughtList(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -321,7 +329,7 @@ class Marketplace {
     }
   }
 
-  favoritesList(token: number) {
+  favoritesList(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -334,7 +342,7 @@ class Marketplace {
     // Implement the favorites list logic here
   }
 
-  addFavorite(referenceKeyAd: number, token: number) {
+  addFavorite(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -347,7 +355,7 @@ class Marketplace {
     }
   }
 
-  removeFavorite(token: number, referenceKeyAd: number) {
+  removeFavorite(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -360,7 +368,7 @@ class Marketplace {
     }
   }
 
-  reportAd(referenceKeyAd: number, token: number, title: string, description: string, condition: string) {
+  reportAd(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"], title: ModelAd["title"], description: ModelAd["description"], condition: ModelAd["condition"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -374,126 +382,6 @@ class Marketplace {
       );
       this.reports = [...this.reports, newReport];
     }
-  }
-}
-
-class ModelUser {
-  primaryKey: number;
-  username: string;
-  email: string;
-  password: string;
-  constructor(username: string, email: string, password: string) {
-    this.primaryKey = Math.random();
-    this.username = username;
-    this.email = email;
-    this.password = password;
-  }
-}
-
-class ModelAd {
-  primaryKey: number;
-  referenceKeyUser: ModelUser["primaryKey"];
-  title: string;
-  description: string;
-  price: number;
-  category: string;
-  condition: string;
-  URLimage: string;
-  address: string;
-  sold: number;
-  createdAt: Date;
-  constructor(
-    referenceKeyUser: ModelUser["primaryKey"],
-    title: string,
-    description: string,
-    price: number,
-    category: string,
-    condition: string,
-    URLimage: string,
-    address: string
-  ) {
-    this.primaryKey = Math.random();
-    this.referenceKeyUser = referenceKeyUser;
-    this.title = title;
-    this.description = description;
-    this.price = price;
-    this.category = category;
-    this.condition = condition;
-    this.URLimage = URLimage;
-    this.address = address;
-    this.sold = 0;
-    this.createdAt = new Date();
-  }
-}
-
-class ModelReview {
-  primaryKey: number;
-  referenceKeyAd: ModelAd["primaryKey"];
-  referenceKeyUser: ModelUser["primaryKey"];
-  title: string;
-  description: string;
-  rating: number;
-  date: Date;
-  constructor(referenceKeyAd: number, referenceKeyUser: number, title: string, description: string, rating: number) {
-    this.primaryKey = Math.random();
-    this.referenceKeyAd = referenceKeyAd;
-    this.referenceKeyUser = referenceKeyUser;
-    this.title = title;
-    this.description = description;
-    this.rating = rating;
-    this.date = new Date();
-  }
-}
-
-class ModelAuth {
-  primaryKey: number;
-  referenceKeyUser: ModelUser["primaryKey"];
-  token: number;
-  constructor(referenceKeyUser: number) {
-    this.primaryKey = Math.random();
-    this.referenceKeyUser = referenceKeyUser;
-    this.token = Math.random();
-  }
-}
-
-class ModelReport {
-  primaryKey: number;
-  referenceKeyAd: ModelAd["primaryKey"];
-  referenceKeyUser: ModelUser["primaryKey"];
-  title: string;
-  description: string;
-  condition: string;
-  date: Date;
-  constructor(referenceKeyAd: number, referenceKeyUser: number, title: string, description: string, condition: string) {
-    this.primaryKey = Math.random();
-    this.referenceKeyAd = referenceKeyAd;
-    this.referenceKeyUser = referenceKeyUser;
-    this.title = title;
-    this.description = description;
-    this.date = new Date();
-    this.condition = condition;
-  }
-}
-
-class ModelFavorite {
-  primaryKey: number;
-  referenceKeyAd: ModelAd["primaryKey"];
-  referenceKeyUser: ModelUser["primaryKey"];
-  constructor(referenceKeyAd: number, referenceKeyUser: number) {
-    this.primaryKey = Math.random();
-    this.referenceKeyAd = referenceKeyAd;
-    this.referenceKeyUser = referenceKeyUser;
-  }
-}
-
-class ModelDevice {
-  primaryKey: number;
-  referenceKeyUser: ModelUser["primaryKey"];
-  macAddress: number;
-  constructor(referenceKeyUser: number) {
-    this.primaryKey = Math.random();
-    this.referenceKeyUser = referenceKeyUser;
-    this.macAddress = Math.random();
   }
 }
 
