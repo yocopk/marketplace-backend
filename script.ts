@@ -31,6 +31,11 @@ class Marketplace {
       (user) => user.email === email && user.password === password
     );
 
+    if (!userFound) {
+      console.log("Utente non registrato!");
+      return null;
+    }
+
     const alreadyLogged = this.auth.some((auth) => {
       return auth.referenceKeyUser === userFound.primaryKey;
     });
@@ -128,7 +133,7 @@ class Marketplace {
 
   updateAd(
     referenceKeyAd: number,
-    token: string,
+    token: number,
     title: string,
     description: string,
     price: number,
@@ -169,7 +174,7 @@ class Marketplace {
       return console.log("Token non valido!");
     } else {
       const newAds = this.ads.filter((ad) => {
-        return ad.referenceKeyAd !== referenceKeyAd;
+        return ad.primaryKey !== referenceKeyAd;
       });
       this.ads = newAds;
       console.log("Annuncio cancellato con successo!");
@@ -182,8 +187,13 @@ class Marketplace {
       console.log("Token non valido!");
     } else {
       const adFound = this.ads.find(
-        (ad) => ad.referenceKeyAd === referenceKeyAd
+        (ad) => ad.primaryKey === referenceKeyAd
       );
+
+      if (!adFound) {
+        console.log("Annuncio non trovato!");
+        return null;
+      }
       if (adFound.referenceKeyUser === tokenFound.referenceKeyUser) {
         adFound.sold = referenceKeyUser;
         console.log("Annuncio venduto con successo!");
@@ -240,6 +250,10 @@ class Marketplace {
     if (!tokenFound) {
       console.log("Token non valido!");
     } else {
+      if (!reviewFound) {
+        console.log("Recensione non trovata!");
+        return null;
+      }
       if (reviewFound.referenceKeyUser !== tokenFound.referenceKeyUser) {
         console.log("Non sei autorizzato a cancellare questa recensione!");
       } else {
@@ -288,7 +302,7 @@ class Marketplace {
       });
 
       const soldItems = userAds.filter((ad) => {
-        return ad.sold.length > 0;
+        return ad.sold !== 0;
       });
 
       console.log("Ecco i tuoi articoli venduti", soldItems);
@@ -386,7 +400,7 @@ class ModelAd {
   condition: string;
   URLimage: string;
   address: string;
-  sold: string;
+  sold: number;
   createdAt: Date;
   constructor(
     referenceKeyUser: ModelUser["primaryKey"],
@@ -407,7 +421,7 @@ class ModelAd {
     this.condition = condition;
     this.URLimage = URLimage;
     this.address = address;
-    this.sold = "";
+    this.sold = 0;
     this.createdAt = new Date();
   }
 }
