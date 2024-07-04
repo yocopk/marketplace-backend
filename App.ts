@@ -355,7 +355,7 @@ class Marketplace {
     }
   }
 
-  removeFavorite(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"]) {
+  deleteFavorite(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -383,6 +383,38 @@ class Marketplace {
       this.reports = [...this.reports, newReport];
     }
   }
+}
+
+class DocApi{
+  path: string = "";
+  method: string = "";
+  authenticated: boolean = false;
+ constructor(path: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", authenticated: boolean){
+  this.path = `/api${path}`,
+  this.method = method,
+  this.authenticated = authenticated
+ }
+}
+
+const apis = {
+  register: new DocApi("/auth/register", "POST", false),
+  login: new DocApi("/auth/login", "POST", false),
+  logout: new DocApi("auth/logout", "GET", true),
+  deleteAccount: new DocApi("/user/{referenceKeyUser}", "DELETE", true),
+  updateUsername: new DocApi("/user/{referenceKeyUser}", "PUT", true),
+  createAd: new DocApi("/ads", "POST", true),
+  updateAd: new DocApi("/ads/{referenceKeyAd}", "PATCH", true),
+  deleteAd: new DocApi("/ads/{referenceKeyAd}", "DELETE", true),
+  createReview: new DocApi("/review", "POST", true),
+  updateReview: new DocApi("/review/{referenceKeyReview}", "PATCH", true),
+  deleteReview: new DocApi("/review/{referenceKeyReview}", "DELETE", true),
+  itemSoldList: new DocApi("/user/{referenceKeyUser}/ads/sold", "GET", true),
+  itemBoughtList: new DocApi("/user/{referenceKeyUser}/ads/bought", "GET", true),
+  favoritesList: new DocApi("/favorites", "GET", true),
+  addFavorite: new DocApi("/favorites/{referenceKeyAd}", "POST", true),
+  deleteFavorite: new DocApi("/favorites/{referenceKeyAd}", "DELETE", true),
+  reportAd: new DocApi("/report", "POST", true),
+  filterList: new DocApi("/ads/{category}", "GET", true),
 }
 
 const app = new Marketplace();
