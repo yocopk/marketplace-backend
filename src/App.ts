@@ -5,8 +5,9 @@ import { ModelFavorite } from "./models/Favorite";
 import { ModelReport } from "./models/Report";
 import { ModelReview } from "./models/Review";
 import { ModelUser } from "./models/User";
+import { DocApi } from "./models/DocApi";
 
-class Marketplace {
+export class Marketplace {
   users: Array<ModelUser> = [];
   ads: Array<ModelAd> = [];
   reviews: Array<ModelReview> = [];
@@ -22,10 +23,12 @@ class Marketplace {
 
     if (userFound) {
       console.log("Utente già registrato!");
+      return false;
     } else {
       const newUser = new ModelUser(email, email, password);
       this.users = [...this.users, newUser];
       console.log("Registrazione effettuata con successo!");
+      return true;
     }
   }
 
@@ -36,7 +39,7 @@ class Marketplace {
 
   login(email: ModelUser["email"], password: ModelUser["password"]) {
     const userFound = this.users.find(
-      (user) => user.email === email && user.password === password
+      (user) => {return user.email === email && user.password === password}
     );
 
     if (!userFound) {
@@ -91,6 +94,10 @@ class Marketplace {
     } else {
       console.log("Token non valido");
     }
+  }
+
+  readUsersList() {
+    return this.users;
   }
 
   updateUsername(username: ModelUser["username"], token: ModelAuth["token"]) {
@@ -288,18 +295,29 @@ class Marketplace {
     }
   }
 
-  filterList(category: ModelAd["category"]) {
+  readAdsList() {
+    return this.ads;
+  }
+
+  readfilterList(category: ModelAd["category"]) {
     // mostra la lista in base alla categoria scelta
     const filteredAds = this.ads.filter((ad) => {
       return ad.category === category;
     });
   }
 
-  AdDetails(referenceKeyAd: ModelAd["primaryKey"]) {
-    // Implement the ad details logic here
+  readAdDetails(referenceKeyAd: ModelAd["primaryKey"]) {
+    const adFound = this.ads.find((ad) => {
+      return ad.primaryKey === referenceKeyAd;
+    });
+    if (!adFound) {
+      console.log("Annuncio non trovato!");
+      return null;
+    }
+    return adFound;
   }
 
-  itemSoldList(token: ModelAuth["token"]) {
+  readitemSoldList(token: ModelAuth["token"]) {
     // Implement the item sold list logic here
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
@@ -317,7 +335,7 @@ class Marketplace {
     }
   }
 
-  itemBoughtList(token: ModelAuth["token"]) {
+  readitemBoughtList(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -329,7 +347,7 @@ class Marketplace {
     }
   }
 
-  favoritesList(token: ModelAuth["token"]) {
+  readfavoritesList(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -342,7 +360,7 @@ class Marketplace {
     // Implement the favorites list logic here
   }
 
-  addFavorite(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"]) {
+  createFavorite(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -368,7 +386,7 @@ class Marketplace {
     }
   }
 
-  reportAd(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"], title: ModelAd["title"], description: ModelAd["description"], condition: ModelAd["condition"]) {
+  createReportAd(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"], title: ModelAd["title"], description: ModelAd["description"], condition: ModelAd["condition"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -385,19 +403,8 @@ class Marketplace {
   }
 }
 
-class DocApi{
-  path: string = "";
-  method: string = "";
-  authenticated: boolean = false;
- constructor(path: string, method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", authenticated: boolean){
-  this.path = `/api${path}`,
-  this.method = method,
-  this.authenticated = authenticated
- }
-}
-
 const apis = {
-  register: new DocApi("/auth/register", "POST", false),
+  register: new DocApi("/user/register", "POST", false),
   login: new DocApi("/auth/login", "POST", false),
   logout: new DocApi("auth/logout", "GET", true),
   deleteAccount: new DocApi("/user/{referenceKeyUser}", "DELETE", true),
@@ -416,5 +423,3 @@ const apis = {
   reportAd: new DocApi("/report", "POST", true),
   filterList: new DocApi("/ads/{category}", "GET", true),
 }
-
-const app = new Marketplace();
