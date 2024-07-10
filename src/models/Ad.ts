@@ -1,7 +1,7 @@
 import { ModelUser } from "./User";
 
 export class ModelAd {
-    primaryKey: number;
+    primaryKey: string;
     referenceKeyUser: ModelUser["primaryKey"];
     title: string;
     description: string;
@@ -10,7 +10,7 @@ export class ModelAd {
     condition: string;
     URLimage: string;
     address: string;
-    sold: number;
+    sold: string;
     createdAt: Date;
     constructor(
       referenceKeyUser: ModelUser["primaryKey"],
@@ -22,7 +22,7 @@ export class ModelAd {
       URLimage: string,
       address: string
     ) {
-      this.primaryKey = Math.random();
+      this.primaryKey = Math.random().toString(16).slice(2);
       this.referenceKeyUser = referenceKeyUser;
       this.title = title;
       this.description = description;
@@ -31,7 +31,7 @@ export class ModelAd {
       this.condition = condition;
       this.URLimage = URLimage;
       this.address = address;
-      this.sold = 0;
+      this.sold = "";
       this.createdAt = new Date();
     }
   }

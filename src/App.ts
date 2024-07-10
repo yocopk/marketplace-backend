@@ -93,6 +93,7 @@ export class Marketplace {
       console.log("Logout effettuato con successo!");
     } else {
       console.log("Token non valido");
+      return null;
     }
   }
 
@@ -143,6 +144,7 @@ export class Marketplace {
       );
       this.ads = [...this.ads, newAd];
       console.log("Annuncio creato con successo!");
+      return newAd;
     }
   }
 
@@ -153,6 +155,7 @@ export class Marketplace {
     description: ModelAd["description"],
     price: ModelAd["price"],
     category: ModelAd["category"],
+    condition: ModelAd["condition"],
     URLimage: ModelAd["URLimage"],
     address: ModelAd["address"]
   ) {
@@ -176,23 +179,26 @@ export class Marketplace {
       adFound.description = description;
       adFound.price = price;
       adFound.category = category;
+      adFound.condition = condition;
       adFound.URLimage = URLimage;
       adFound.address = address;
       console.log("Annuncio aggiornato con successo!");
+      return adFound;
     }
   }
 
-  deleteAd(token: ModelAuth["token"], referenceKeyAd: number) {
+  deleteAd(token: ModelAuth["token"], referenceKeyAd: ModelAd["primaryKey"]) {
     const tokenFound = this.isTokenValid(token);
 
     if (!tokenFound) {
       return console.log("Token non valido!");
     } else {
-      const newAds = this.ads.filter((ad) => {
+      const newAdsList = this.ads.filter((ad) => {
         return ad.primaryKey !== referenceKeyAd;
       });
-      this.ads = newAds;
+      this.ads = newAdsList;
       console.log("Annuncio cancellato con successo!");
+      return newAdsList;
     }
   }
 
@@ -233,6 +239,7 @@ export class Marketplace {
       );
       this.reviews = [...this.reviews, newReview];
       console.log("Recensione creata con successo!");
+      return newReview;
     }
   }
 
@@ -253,6 +260,7 @@ export class Marketplace {
         reviewFound.rating = rating;
 
         console.log("Annuncio modificato con successo!");
+        return reviewFound;
       }
     }
   }
@@ -328,7 +336,7 @@ export class Marketplace {
       });
 
       const soldItems = userAds.filter((ad) => {
-        return ad.sold !== 0;
+        return ad.sold !== "";
       });
 
       console.log("Ecco i tuoi articoli venduti", soldItems);
@@ -358,6 +366,10 @@ export class Marketplace {
       console.log("Ecco la tua lista dei favoriti", userFavorites);
     }
     // Implement the favorites list logic here
+  }
+
+  readReviewsList() {
+    return this.reviews;
   }
 
   createFavorite(referenceKeyAd: ModelAd["primaryKey"], token: ModelAuth["token"]) {

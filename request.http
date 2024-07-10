@@ -3,7 +3,7 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "email": "pino@gmail.com",
+    "email": "andrea@gmail.com",
     "password": "1234"
 }
 
@@ -12,23 +12,94 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "email": "pino@gmail.com",
+    "email": "andrea@gmail.com",
     "password": "1234"
 }
 
 ### USER LOGOUT
 GET http://localhost:3000/auth/logout
 Content-Type: application/json
-Authorization: 0.9885206667549773
+Authorization: 
 
-### GET USERS
+### USER DELETE
+DELETE http://localhost:3000/user/:referenceKeyUser
+Content-Type: application/json
+Authorization: 924b36f11d151
 
-GET http://localhost:3000/user
+### USER UPDATE
+PUT http://localhost:3000/user/:referenceKeyUser
+Content-Type: application/json
+Authorization: 924b36f11d151
+
+{
+    "username": "Bambinobellissimo"
+}
+### READ USERS LIST
+
+GET http://localhost:3000/users
 Content-Type: application/json
 
 ### CREATE AD
 POST http://localhost:3000/ads
 Content-Type: application/json
-{
+Authorization: 30fbd35a6a0a4
 
+{
+  "title": "Calzini sporchi",
+  "description": "Vendo calzini usati pieni di sudore, effettivamente fanno davvero schifo",
+  "price": "30€",
+  "category": "Vestiti",
+  "condition": "Usato",
+  "URLimage": "https://thumbs.dreamstime.com/z/calzini-sporchi-puzzolente-isolati-sui-precedenti-bianchi-42194500.jpg",
+  "address": "Via santoro, 44"
+}
+
+### UPDATE AD
+PATCH http://localhost:3000/ads/2a37321e9253a
+Content-Type: application/json
+Authorization: c08426caf56e8
+
+{
+  "title": "Calzini puliti",
+  "description": "Vendo calzini come nuovi, effettivamente sono davvero comodi",
+  "price": "54€",
+  "category": "Vestiti",
+  "condition": "Buono",
+  "URLimage": "https://shop.bestsub.it/data/gfx/pictures/medium/6/1/5416_1.jpg",
+  "address": "Via santoro, 42"
+}
+
+### READ ADS LIST
+GET http://localhost:3000/ads
+Content-Type: application/json
+
+### DELETE AD
+DELETE http://localhost:3000/ads/821aa1a79e01c
+Content-Type: application/json
+Authorization: 583de854ae9dd
+
+### READ REVIEW LIST
+GET http://localhost:3000/reviews
+Content-Type: application/json
+
+### CREATE REVIEW
+POST http://localhost:3000/reviews/b644646e088be
+Content-Type: application/json
+Authorization: 30fbd35a6a0a4
+
+{
+  "title": "Davvero serio",
+  "description": "incredibile serietà e disponibilità",
+  "rating": 5
+}
+
+### UPDATE REVIEW
+PATCH http://localhost:3000/reviews/b644646e088be
+Content-Type: application/json
+Authorization: 30fbd35a6a0a4
+
+{
+  "title": "Bruttissimo",
+  "description": "Per niente serio, vergogna!",
+  "rating": 1
 }
