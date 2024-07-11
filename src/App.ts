@@ -110,11 +110,14 @@ export class Marketplace {
       if (userKeyFound) {
         userKeyFound.username = username;
         console.log("Username aggiornato con successo!");
+        return userKeyFound;
       } else {
         console.log("Qualcosa è andato storto");
+        return null;
       }
     } else {
       console.log("Token non valido");
+      return null;
     }
   }
 
@@ -218,8 +221,10 @@ export class Marketplace {
       if (adFound.referenceKeyUser === tokenFound.referenceKeyUser) {
         adFound.sold = referenceKeyUser;
         console.log("Annuncio venduto con successo!");
+        return adFound;
       } else {
         console.log("Qualcosa è andato storto");
+        return null
       }
     }
   }
@@ -230,6 +235,14 @@ export class Marketplace {
     if (!tokenFound) {
       console.log("Token non valido!");
     } else {
+      const adFound = this.ads.find(
+        (ad) => ad.primaryKey === referenceKeyAd
+      )
+
+      if (!adFound) {
+        console.log("Annuncio non trovato!");
+        return null;
+      }
       const newReview = new ModelReview(
         referenceKeyAd,
         tokenFound.referenceKeyUser,
@@ -249,10 +262,11 @@ export class Marketplace {
     const reviewFound = this.reviews.find(
       (review) => review.referenceKeyAd === referenceKeyAd
     );
+    console.log(reviewFound)
     if (!tokenFound) return console.log("Token non valido!");
     if (!reviewFound) return console.log("Recensione non trovata!");
     else {
-      if (tokenFound.referenceKeyUser === reviewFound.referenceKeyUser)
+      if (tokenFound.referenceKeyUser !== reviewFound.referenceKeyUser)
         return console.log("Non sei autorizzato a modificare questo annuncio!");
       else {
         reviewFound.title = title;
@@ -307,11 +321,13 @@ export class Marketplace {
     return this.ads;
   }
 
-  readfilterList(category: ModelAd["category"]) {
+  readFilterList(category: ModelAd["category"]) {
     // mostra la lista in base alla categoria scelta
     const filteredAds = this.ads.filter((ad) => {
       return ad.category === category;
     });
+
+    return filteredAds;
   }
 
   readAdDetails(referenceKeyAd: ModelAd["primaryKey"]) {
@@ -343,7 +359,7 @@ export class Marketplace {
     }
   }
 
-  readitemBoughtList(token: ModelAuth["token"]) {
+  readItemBoughtList(token: ModelAuth["token"]) {
     const tokenFound = this.isTokenValid(token);
     if (!tokenFound) {
       console.log("Token non valido!");
@@ -351,7 +367,7 @@ export class Marketplace {
       const userAds = this.ads.filter((ad) => {
         return ad.sold === tokenFound.referenceKeyUser;
       });
-      console.log("Ecco i tuoi articoli comprati", userAds);
+      return userAds;
     }
   }
 

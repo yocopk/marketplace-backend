@@ -43,6 +43,16 @@ app.get("/reviews", (req: Request, res: Response) => {
     return res.json(MyApp.readReviewsList());
 })
 
+app.get("/ads/category/:category", (req: Request, res: Response) => {
+    const category = req.params.category;
+    return res.json(MyApp.readFilterList(category));
+})
+
+app.get("/ads/:referebceKeyAd", (req: Request, res: Response) => {
+    const idAd = req.params.referebceKeyAd;
+    return res.json(MyApp.readAdDetails(idAd));
+})
+
 app.delete("/user/:referenceKeyUser", (req: Request, res: Response) => {
     const token = req.headers.authorization;
     if (!token) return res.status(400).json({message: "Missing token"});
@@ -73,6 +83,15 @@ app.patch("/ads/:referenceKeyAd", (req: Request, res: Response) => {
         const newURLimage = req.body.URLimage;
         const newAddress = req.body.address;
         return res.json(MyApp.updateAd(req.params.referenceKeyAd, token, newTitle, newDescription, newPrice, newCategory, newCondition, newURLimage, newAddress));
+    }
+})
+
+app.delete("/reviews/:referenceKeyAd", (req: Request, res: Response) => {
+    const token = req.headers.authorization;
+    if (!token) return res.status(400).json({message: "Missing token"});
+    if (!MyApp.isTokenValid((token))) return res.status(400).json({message: "Invalid token", token: typeof token});
+    else {
+        return res.json(MyApp.deleteReview(token, req.params.referenceKeyAd));
     }
 })
 
@@ -150,15 +169,36 @@ app.post("/reviews/:referenceKeyAd", (req: Request, res: Response) => {
         const title = req.body.title;
         const description = req.body.description;
         const rating = req.body.rating;
-        const referenceKeyAd = req.body.referenceKeyAd;
-        const newReviewCreated = MyApp.createReview(token, referenceKeyAd, title, description, rating);     
+        const newReviewCreated = MyApp.createReview(token, req.params.referenceKeyAd, title, description, rating);     
 
         if (newReviewCreated) return res.status(200).json(newReviewCreated);
         else return res.status(400).json({message: "Error"});       
     }
 })
 
-app.use("/api", routerApi);
+app.post ("/ads/:referenceKeyAd", (req: Request, res: Response) => {
+    const token = req.headers.authorization;
+    if (!token) return res.status(400).json({message: "Missing token"});
+    if (!MyApp.isTokenValid((token))) return res.status(400).json({message: "Invalid token", token: typeof token});
+    else {
+        const markAsSold = MyApp.markAsSold(token, req.params.referenceKeyAd, req.body.sold);
+
+        if (markAsSold) return res.status(200).json(markAsSold);
+        else return res.status(400).json({message: "Error"});
+    }
+})
+
+app.get("/user/ads/bought", (req: Request, res: Response) => {
+    const token = req.headers.authorization;
+    if (!token) return res.status(400).json({message: "Missing token"});
+    if (!MyApp.isTokenValid((token))) return res.status(400).json({message: "Invalid token", token: typeof token});
+    else {
+        const boughtAds = MyApp.readItemBoughtList(token);
+        if (boughtAds) return res.status(200).json(boughtAds);
+        else return res.status(400).json({message: "Error"});
+    }
+})
+
 
 app.listen(port, () => {
     console.log(`server started at http://localhost:${port}`);

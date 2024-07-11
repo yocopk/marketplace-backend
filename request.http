@@ -42,12 +42,12 @@ Content-Type: application/json
 ### CREATE AD
 POST http://localhost:3000/ads
 Content-Type: application/json
-Authorization: 30fbd35a6a0a4
+Authorization: 7a741cc2c8d5b
 
 {
-  "title": "Calzini sporchi",
+  "title": "Calzini sporchissimi",
   "description": "Vendo calzini usati pieni di sudore, effettivamente fanno davvero schifo",
-  "price": "30€",
+  "price": "20€",
   "category": "Vestiti",
   "condition": "Usato",
   "URLimage": "https://thumbs.dreamstime.com/z/calzini-sporchi-puzzolente-isolati-sui-precedenti-bianchi-42194500.jpg",
@@ -73,6 +73,9 @@ Authorization: c08426caf56e8
 GET http://localhost:3000/ads
 Content-Type: application/json
 
+### READ AD DETAIL
+GET http://localhost:3000/ads/d013a330bc6c
+
 ### DELETE AD
 DELETE http://localhost:3000/ads/821aa1a79e01c
 Content-Type: application/json
@@ -83,9 +86,9 @@ GET http://localhost:3000/reviews
 Content-Type: application/json
 
 ### CREATE REVIEW
-POST http://localhost:3000/reviews/b644646e088be
+POST http://localhost:3000/reviews/5dfe6442e1d1a
 Content-Type: application/json
-Authorization: 30fbd35a6a0a4
+Authorization: 80e5b2cdb9782
 
 {
   "title": "Davvero serio",
@@ -94,12 +97,37 @@ Authorization: 30fbd35a6a0a4
 }
 
 ### UPDATE REVIEW
-PATCH http://localhost:3000/reviews/b644646e088be
+PATCH http://localhost:3000/reviews/e720da7d0ec4c
 Content-Type: application/json
-Authorization: 30fbd35a6a0a4
+Authorization: a34f46794322b
 
 {
   "title": "Bruttissimo",
   "description": "Per niente serio, vergogna!",
   "rating": 1
 }
+
+### DELETE REVIEW
+DELETE http://localhost:3000/reviews/5dfe6442e1d1a
+Content-Type: application/json
+Authorization: 80e5b2cdb9782
+
+### GET CATEGORY LIST
+GET http://localhost:3000/ads/category/Vestiti
+Content-Type: application/json
+
+
+### MARK AS SOLD 
+POST http://localhost:3000/ads/ab47d18e6aea1
+Content-Type: application/json
+Authorization: 7a741cc2c8d5b
+
+{
+  "sold": "bfc152b27ef21"
+}
+
+
+### BOUGHT LIST
+GET http://localhost:3000/user/ads/bought
+Content-Type: application/json
+Authorization: 7a741cc2c8d5b
