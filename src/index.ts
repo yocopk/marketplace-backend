@@ -7,9 +7,16 @@ const server = express.json();
 const routerApi = express.Router();
 const MyApp = new Marketplace();
 
+const port = process.env.PORT || 3000;
+const baseURL = process.env.BASE_URL || "http://localhost:";
+
 // routerApi.use("/users", routerUsers)
 
 app.use(server);
+
+app.get("/", (req: Request, res: Response) => {
+    return res.send("Hello World!");
+});
 
 app.get("/auth/logout", (req: Request, res: Response) => {
     const token = req.headers.authorization;
@@ -153,6 +160,6 @@ app.post("/reviews/:referenceKeyAd", (req: Request, res: Response) => {
 
 app.use("/api", routerApi);
 
-app.listen(3000, () => {
-    console.log("server started at http://localhost:3000");
+app.listen(port, () => {
+    console.log(`server started at http://localhost:${port}`);
 });
