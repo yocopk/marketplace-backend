@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+  title: Express API with Swagger
+  version: 1.0.0
+  description: A simple Express API application
+servers:
+  - url: http://localhost:3000
+paths:
+  /users:
+    get:
+      summary: Retrieve a list of users
+      responses:
+        200:
+          description: A list of users
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: john.doe@example.com
+      responses:
+        201:
+          description: The created user

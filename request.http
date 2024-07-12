@@ -118,7 +118,7 @@ Content-Type: application/json
 
 
 ### MARK AS SOLD 
-POST http://localhost:3000/ads/ab47d18e6aea1
+POST http://localhost:3000/ads/bc44b29b6966
 Content-Type: application/json
 Authorization: 7a741cc2c8d5b
 
