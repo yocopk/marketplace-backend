@@ -2,34 +2,41 @@ import express, { Request, Response } from "express";
 import { Marketplace } from "./App";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import YAML from 'yamljs';
 
 const app = express();
 const server = express.json();
-const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Express API with Swagger',
-            version: '1.0.0',
-            description: 'A simple Express API application',
-        },
-        servers: [
-            {
-                url: 'http://localhost:3000',
-            },
-        ],
-    },
-    apis: ['./src/**/*.ts'], // Percorso ai file delle rotte
-};
+// const swaggerOptions = {
+//     swaggerDefinition: {
+//         openapi: '3.0.0',
+//         info: {
+//             title: 'Express API with Swagger',
+//             version: '1.0.0',
+//             description: 'A simple Express API application',
+//         },
+//         servers: [
+//             {
+//                 url: 'http://localhost:3000',
+//             },
+//         ],
+//     },
+//     apis: ['./src/**/*.ts'], // Percorso ai file delle rotte
+// };
 
-const swaggerDocument = swaggerJSDoc(swaggerOptions);
+const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
+    swaggerOptions: {
+      tryItOutEnabled: true
+    },
+  };
+
+const swaggerDocument = YAML.load(__dirname + '/swagger.yaml');
 
 const MyApp = new Marketplace();
 
 const port = process.env.PORT || 3000;
 
 app.use(server);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 
 /**
  * @swagger
@@ -49,25 +56,42 @@ app.get("/", (req: Request, res: Response) => {
  * /auth/logout:
  *   get:
  *     summary: Logs out a user
+ *     tags:
+ *       - Authentication
  *     parameters:
  *       - in: header
  *         name: Authorization
  *         schema:
  *           type: string
  *         required: true
- *         description: Bearer token
+ *         description: token
  *     responses:
  *       200:
  *         description: User logged out
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User logged out successfully
  *       400:
  *         description: Missing or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Missing token or Invalid token
  */
 app.get("/auth/logout", (req: Request, res: Response) => {
     const token = req.headers.authorization;
-    if (!token) return res.status(400).json({message: "Missing token"});
-    console.log((token));
-    if (!MyApp.isTokenValid((token))) return res.status(400).json({message: "Invalid token", token: typeof token});
-    else return res.json(MyApp.logout((token)));
+    if (!token) return res.status(400).json({ message: "Missing token" });
+    if (!MyApp.isTokenValid(token)) return res.status(400).json({ message: "Invalid token" });
+    return res.json({ message: MyApp.logout(token) });
 });
 
 /**
@@ -405,60 +429,82 @@ app.patch("/reviews/:referenceKeyAd", (req: Request, res: Response) => {
  * /auth/login:
  *   post:
  *     summary: Logs in a user
- *     parameters:
- *       - in: body
- *         name: credentials
- *         description: The user's credentials
- *         schema:
- *           type: object
- *           required:
- *             - email
- *             - password
- *           properties:
- *             email:
- *               type: string
- *             password:
- *               type: string
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user's email
+ *               password:
+ *                 type: string
+ *                 description: The user's password
  *     responses:
  *       200:
  *         description: User logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: The authentication token
  *       400:
  *         description: Missing email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Missing email or Missing password
  */
 app.post("/auth/login", (req: Request, res: Response) => {
     const email = req.body.email;
     const password = req.body.password;
-    if (email === "") return res.status(400).json({message: "Missing email"});
-    if (password === "") return res.status(400).json({message: "Missing password"});
+
+    if (email === "") return res.status(400).json({ message: "Missing email" });
+    if (password === "") return res.status(400).json({ message: "Missing password" });
+
     const user = MyApp.login(email, password);
-    if (!!user) return res.status(200).json({token: user.token});
-    else return res.status(400).json({message: "Error"});
+
+    if (user) return res.status(200).json({ token: user.token });
+    else return res.status(400).json({ message: "Error" });
 });
 
 /**
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Registers a new user
- *     parameters:
- *       - in: body
- *         name: credentials
- *         description: The user's credentials
- *         schema:
- *           type: object
- *           required:
- *             - email
- *             - password
- *           properties:
- *             email:
- *               type: string
- *             password:
- *               type: string
+ *     summary: Register a new user
+ *     tags:
+ *       - User POST
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
- *         description: User registered
+ *         description: User registered successfully
  *       400:
- *         description: Missing email or password
+ *         description: Error occurred
  */
 app.post("/auth/register", (req: Request, res: Response) => {
     const email = req.body.email;

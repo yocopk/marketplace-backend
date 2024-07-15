@@ -1,32 +1,302 @@
 openapi: 3.0.0
 info:
-  title: Express API with Swagger
+  title: dubitoAPI
   version: 1.0.0
-  description: A simple Express API application
 servers:
+  - url: https://dubito.up.railway.app
   - url: http://localhost:3000
+tags:
+  - name: User
+  - name: Ads
+  - name: Review
+  - name: Others
 paths:
-  /users:
-    get:
-      summary: Retrieve a list of users
-      responses:
-        200:
-          description: A list of users
+  /auth/register:
     post:
-      summary: Create a new user
+      tags:
+        - User
+      summary: Register
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
-              properties:
-                name:
-                  type: string
-                  example: John Doe
-                email:
-                  type: string
-                  example: john.doe@example.com
+              example:
+                email: pino@gmail.com
+                password: "1234"
       responses:
-        201:
-          description: The created user
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /auth/logout:
+    get:
+      tags:
+        - User
+      summary: Logout
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 857a49de9167c
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /users:
+    get:
+      tags:
+        - User
+      summary: Read Users List
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /user/{referenceKeyUser}:
+    put:
+      tags:
+        - User
+      summary: Update Username
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                username: pincopallino
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 964ca97820b39
+        - name: referenceKeyUser
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 88ed39fbd6976
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - User
+      summary: Delete User
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: "48e9200878505"
+        - name: referenceKeyUser
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 272101479cfa3
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /ads/{referenceKeyAd}:
+    post:
+      tags:
+        - Others
+      summary: Mark As Sold
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                sold: ""
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Ads
+      summary: Read Ad Detail
+      parameters:
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Ads
+      summary: Delete Ad
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /ads:
+    post:
+      tags:
+        - Ads
+      summary: Create Ad
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                title: Calzini sporchissimi
+                description: >-
+                  Vendo calzini usati pieni di sudore, effettivamente fanno
+                  davvero schifo
+                price: 20€
+                category: Vestiti
+                condition: Usato
+                URLimage: >-
+                  https://thumbs.dreamstime.com/z/calzini-sporchi-puzzolente-isolati-sui-precedenti-bianchi-42194500.jpg
+                address: Via santoro, 44
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: 964ca97820b39
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Ads
+      summary: Read Ads List
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /reviews/{referenceKeyAd}:
+    post:
+      tags:
+        - Review
+      summary: Create Review
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Review
+      summary: Update Review
+      requestBody:
+        content: {}
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Review
+      summary: Delete Review
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+        - name: referenceKeyAd
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /category/{category}:
+    get:
+      tags:
+        - Others
+      summary: Read Category List
+      parameters:
+        - name: category
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /user/ads/bought:
+    get:
+      tags:
+        - Others
+      summary: Bought List
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
